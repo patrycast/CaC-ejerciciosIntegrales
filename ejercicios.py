@@ -130,51 +130,39 @@ class Persona:
         self.dni=dni
         
     def set_nombre(self, nombre):
-        self.nombre= nombre
+        if isinstance(nombre, str):
+            self.nombre= nombre
+        else:
+            print("Por favor ingrese una cadena de caracteres")
         
     def get_nombre(self):
-        return self.nombre
-    
-    def set_edad(self, edad):
-        if edad>=0:
-            self.edad=edad
-        else:
-            print("Ingrese una edad válida")    
+        return self.nombre   
         
     def get_edad(self):
         return self.edad  
     
     def set_dni(self, dni):
-        if len(dni) ==9:
+        if isinstance(dni, str) and len(dni) == 9:
             self.dni= dni
         else:
             print("Debe ingresar 9 caracteres") 
             
     def get_dni(self):
-        return self.dni          
-               
-               
+        return self.dni   
+    
     def mostrar(self):
         print(f"Nombre: {self.nombre}")
         print(f"Edad: {self.edad}")
         print(f"DNI: {self.dni}")
-
+        
     def es_mayor_de_edad(self):
-        return self.edad >= 18
+        return  self.get_edad() >= 18    
+    
+persona1= Persona("ana", 25, 123567849)
 
-persona = Persona()
-
-persona.set_nombre("Elsa")
-persona.set_edad(26)
-persona.set_dni("118345679")
-
-persona.mostrar()
-
-if persona.es_mayor_de_edad():
-    print("Es mayor de edad")
-else:
-    print("No es mayor de edad")
-
+print(persona1.mostrar())    
+print(persona1.es_mayor_de_edad())
+print(" fin del ejercicio 6")
 # 7- Crea una clase llamada Cuenta que tendrá los siguientes atributos: titular (que es una
 # persona) y cantidad (puede tener decimales). El titular será obligatorio y la cantidad es
 # opcional. Crear los siguientes métodos para la clase:
@@ -189,44 +177,43 @@ else:
 
 class Cuenta():
     def __init__(self, titular, cantidad=0.0):
-        self.titular= titular
-        self.cantidad= cantidad
-       
-    def set_titular(self, titular):
-        self.titular= titular
-        
+        self.__titular= titular
+        self.__cantidad= cantidad  
+     
     def get_titular(self):
-        return self.titular   
-         
+        return self.__titular 
+          
+    def set_cantidad(self, cantidad):
+        if cantidad >=0:
+            self.__cantidad = cantidad
+        else:
+            print("Por favor ingrese cantidad positiva") 
+            
     def get_cantidad(self):
-        return self.cantidad
+        return self.__cantidad           
            
     def mostrar(self):
-        print("Datos del titular:")
-        self.titular.mostrar()
-        print(f"Cantidad: {self.cantidad}")
+        print(f"Titular: {self.__titular}")
+        print(f"Cantidad: {self.__cantidad}")
         
     def ingresar(self, cantidad):
-        if cantidad > 0:
-            self.cantidad += cantidad
+        if cantidad >=0:
+            self.__cantidad += cantidad
         else:
             print("La cantidad ingresada debe ser positiva.")
 
     def retirar(self, cantidad):
-        if cantidad > 0:
-            self.cantidad -= cantidad
-        else:
-            print("La cantidad a retirar debe ser positiva.")
+                self.__cantidad -= cantidad
 
+cuenta1 = Cuenta("Norma Pérez", 1000.0)
+cuenta1.mostrar()
 
-persona3 = Persona("norma", 40, "123456789")
-cuenta3 = Cuenta(persona3, 1000.0)
-cuenta3.mostrar()
+cuenta1.ingresar(500.0)
+cuenta1.mostrar()
 
-cuenta3.ingresar(500.0)
-cuenta3.mostrar()
-cuenta3.retirar(200.0)
-cuenta3.mostrar()
+cuenta1.retirar(300.0)
+cuenta1.mostrar()
+
 
 
 # 8- Vamos a definir ahora una “Cuenta Joven”, para ello vamos a crear una nueva clase
@@ -243,47 +230,45 @@ cuenta3.mostrar()
 # cuenta.
 
 class CuentaJoven(Cuenta):
-    def __init__(self, titular, cantidad=0.0, bonificacion=0.0):
+    def __init__(self, titular, bonificacion, cantidad=0.0):
         super().__init__(titular, cantidad)
-        self.bonificacion= bonificacion
-        
-    def get_bonificacion(self): 
-        return self.bonificacion
+        self.__bonificacion = bonificacion
+    
+    def get_bonificacion(self):
+        return self.__bonificacion
     
     def set_bonificacion(self, bonificacion):
-        self.bonificacion= bonificacion
-         
+        self.__bonificacion = bonificacion
+    
     def es_titular_valido(self):
-        return self.titular.es_mayor_de_edad() and self.titular.get_edad() < 25   
+        if isinstance(self.get_titular(), Persona):
+            return self.get_titular().es_mayor_de_edad() and self.get_titular().get_edad() < 25
+        return False
     
     def retirar(self, cantidad):
         if self.es_titular_valido():
             super().retirar(cantidad)
         else:
-            print("El titular no es válido para retirar dinero.")
-
+            print("No se puede retirar dinero. Titular no válido.")
+    
     def mostrar(self):
-        return f"Cuenta Joven\nBonificación: {self.bonificacion}%\n{super().mostrar()}"
-
+        print("Cuenta Joven:")
+        self.get_titular().mostrar()  
+        super().mostrar()
+        print(f"Bonificación: {self.__bonificacion}%")
 
 # Ejemplo de uso
-persona4 = Persona("samanta", 22, "542410395")
-cuenta_joven = CuentaJoven(persona4, 500.0, 5.0)
+titular_joven = Persona("Maria García", 20)
+titular_menor = Persona("Pedro Pérez", 15)
+
+cuenta_joven = CuentaJoven(titular_joven, 5.0, 800.0)
+cuenta_menor = CuentaJoven(titular_menor, 3.0, 500.0)
+
 cuenta_joven.mostrar()
+cuenta_menor.mostrar()
 
-if cuenta_joven.es_titular_valido():
-    print("El titular es válido.")
-else:
-    print("El titular no es válido.")
+print("Es titular válido (Ana):", cuenta_joven.es_titular_valido())  
+print("Es titular válido (Juan):", cuenta_menor.es_titular_valido()) 
 
-cuenta_joven.ingresar(100.0)
-cuenta_joven.mostrar()
-
-cuenta_joven.retirar(50.0)
-cuenta_joven.mostrar()
-
-
-
-
-
-       
+cuenta_joven.retirar(100.0) 
+cuenta_menor.retirar(200.0)  
